@@ -373,7 +373,7 @@ class SymbolBase(common.ElementBase):
                     if constant is not None:
                         value = constant.getName()
 
-        comment = self.generateAsmLineComment(localOffset)
+        comment = self.generateAsmLineComment(localOffset, w)
         output += f"{label}{comment} {dotType} {value}"
         output += self.getEndOfLineComment(i)
         output += common.GlobalConfig.LINE_ENDS
@@ -552,8 +552,8 @@ class SymbolBase(common.ElementBase):
                     lastSymName = sym2.getName()
                 elif sym1 is not None:
                     lastSymName = sym1.getName()
-            elif self.isFloat(i):
-                data, skip = self.getNthWordAsFloat(i)
+            #elif self.isFloat(i):
+            #    data, skip = self.getNthWordAsFloat(i)
             elif self.isDouble(i):
                 data, skip = self.getNthWordAsDouble(i)
             elif self.isString():

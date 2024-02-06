@@ -44,7 +44,9 @@ class RelocEntry:
 
 class SectionRelocZ64(SectionBase):
     def __init__(self, context: common.Context, vromStart: int, vromEnd: int, vram: int, filename: str, array_of_bytes: bytes, segmentVromStart: int, overlayCategory: str|None):
-        super().__init__(context, vromStart, vromEnd, vram, filename, common.Utils.bytesToWords(array_of_bytes, vromStart, vromEnd), common.FileSectionType.Reloc, segmentVromStart, overlayCategory)
+        from pathlib import Path
+        super().__init__(context, vromStart, vromEnd, vram, Path(filename).stem, common.Utils.bytesToWords(array_of_bytes, vromStart, vromEnd), common.FileSectionType.Reloc, segmentVromStart, overlayCategory)
+        self.filename = filename
 
         self.seekup = self.words[-1]
 
@@ -96,6 +98,10 @@ class SectionRelocZ64(SectionBase):
         vrom = self.getVromOffset(localOffset)
         vromEnd = vrom + 4 * 4
         sym = symbols.SymbolData(self.context, vrom, vromEnd, localOffset + self.inFileOffset, currentVram, self.words[0:4], self.segmentVromStart, self.overlayCategory)
+        # fix spimdisasm using a symbol for e.g. _ovl_Bg_Ganon_Otyuka_relocSegmentTextSize
+        def monkeypatch_allowWordSymbolReference(self, *args, **kwargs):
+            return False
+        sym._allowWordSymbolReference = monkeypatch_allowWordSymbolReference
         sym.contextSym.name = f"{self.name}_OverlayInfo"
         sym.parent = self
         sym.setCommentOffset(self.commentOffset)

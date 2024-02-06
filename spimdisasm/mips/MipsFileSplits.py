@@ -37,7 +37,7 @@ class FileSplits(FileBase):
                 if relocSection.differentSegment:
                     relocStart += relocSection.bssSize
                 relocSection.vram = self.vram + relocStart
-            self.sectionsDict[common.FileSectionType.Reloc][filename] = relocSection
+            self.sectionsDict[common.FileSectionType.Reloc][relocSection.filename] = relocSection
 
         if splitsData is None and relocSection is None:
             self.sectionsDict[common.FileSectionType.Text][filename] = sections.SectionText(context, vromStart, vromEnd, vram, filename, array_of_bytes, segmentVromStart, overlayCategory)
